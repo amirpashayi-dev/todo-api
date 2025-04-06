@@ -26,3 +26,14 @@ class TasksDetailAPIView(RetrieveUpdateAPIView):
 
     def get_queryset(self):
         return Tasks.objects.filter(user=self.request.user)
+
+
+class CategoryAPIView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
