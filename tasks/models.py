@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -11,7 +12,7 @@ class Category(models.Model):
         return self.name
 
 
-class Todo(models.Model):
+class Tasks(models.Model):
     FLAG_CHOICES = (
         ('Low', 'Low'),
         ('Medium', 'Medium'),
@@ -32,5 +33,7 @@ class Todo(models.Model):
         return self.name
 
     def clean(self):
-        if self.end and self.end < self.start:
-            raise ValidationError("End date must be after start date")
+        if self.end:
+            start_time = self.start or timezone.now()
+            if self.end < start_time:
+                raise ValidationError("End date must be after start date")
