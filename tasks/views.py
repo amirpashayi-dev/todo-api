@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Tasks, Category
 from .serializers import CategorySerializer, TaskSerializer
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView
 
 
 class TasksAPIView(ListCreateAPIView):
@@ -37,3 +37,11 @@ class CategoryAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class CategoryDetailAPIView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
