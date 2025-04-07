@@ -6,11 +6,17 @@ from rest_framework.views import APIView
 from .models import Tasks, Category
 from .serializers import CategorySerializer, TaskSerializer
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter, SearchFilter
 
 
 class TasksAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TaskSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['is_done', 'flag', 'category']
+    search_fields = ['name', 'description']
+    ordering_fields = ['start', 'end', 'flag']
 
     def get_queryset(self):
         queryset = Tasks.objects.filter(user=self.request.user)
